@@ -4,8 +4,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
+@Table(name = "Garage")
 public class GarageEntity {
 
     @Id
@@ -15,6 +21,8 @@ public class GarageEntity {
     private String location;
     private String city;
     private Integer capacity;
+    @ManyToMany(mappedBy = "garages")
+    private Set<CarEntity> cars = new HashSet<>();
 
     public GarageEntity() {
     }
@@ -64,5 +72,13 @@ public class GarageEntity {
 
     public void setCapacity(Integer capacity) {
         this.capacity = capacity;
+    }
+
+    public Set<CarEntity> getCars() {
+        return cars;
+    }
+
+    public void setCars(Set<CarEntity> cars) {
+        this.cars = cars;
     }
 }

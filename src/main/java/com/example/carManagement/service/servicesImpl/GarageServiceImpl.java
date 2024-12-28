@@ -5,7 +5,7 @@ import com.example.carManagement.api.services.GarageService;
 import com.example.carManagement.service.entities.GarageEntity;
 import com.example.carManagement.service.exceptions.ResourceNotFoundException;
 import com.example.carManagement.service.repositories.GarageRepository;
-import com.example.carManagement.service.util.GarageEntityConvertorUtil;
+import com.example.carManagement.service.util.DtoEntityConvertorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +25,14 @@ public class GarageServiceImpl implements GarageService {
             throw new ResourceNotFoundException("No garages found in city: " + city);
         }
         return garages.stream()
-                .map(GarageEntityConvertorUtil::convertToDto)
+                .map(DtoEntityConvertorUtil::convertToDto)
                 .toList();
     }
 
     @Override
     public List<GarageDto> findAll() {
         return garageRepository.findAll().stream()
-                .map(GarageEntityConvertorUtil::convertToDto)
+                .map(DtoEntityConvertorUtil::convertToDto)
                 .toList();
     }
 
@@ -40,12 +40,12 @@ public class GarageServiceImpl implements GarageService {
     public GarageDto findById(Long id) {
         GarageEntity garageEntity = garageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Garage with ID " + id + " not found"));
-        return GarageEntityConvertorUtil.convertToDto(garageEntity);
+        return DtoEntityConvertorUtil.convertToDto(garageEntity);
     }
 
     @Override
     public void create(GarageDto dto) {
-        garageRepository.save(GarageEntityConvertorUtil.convertToEntity(dto));
+        garageRepository.save(DtoEntityConvertorUtil.convertToEntity(dto));
     }
 
     @Override

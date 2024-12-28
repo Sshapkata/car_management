@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 public class GarageDto {
 
     private Long id;
-
     @NotBlank(message = "Name cannot be blank")
     private String name;
     @NotBlank(message = "Location cannot be blank")
@@ -22,7 +21,6 @@ public class GarageDto {
         this.location = location;
         this.city = city;
         this.capacity = capacity;
-
     }
 
     public Long getId() {
