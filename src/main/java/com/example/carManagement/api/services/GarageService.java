@@ -10,6 +10,8 @@ public interface GarageService {
 
     List<GarageDto> findAll(String city);
 
+    List<GarageDto> findAll();
+
     GarageDto findById(Long id);
 
     void updateById(Long id, GarageDto dto);

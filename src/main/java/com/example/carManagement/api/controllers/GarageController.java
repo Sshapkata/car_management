@@ -24,8 +24,11 @@ public class GarageController {
     private GarageService garageService;
 
     @GetMapping
-    public List<GarageDto> findAll(@RequestParam String city){
-        return garageService.findAll(city);
+    public List<GarageDto> findAll(@RequestParam(required = false) String city) {
+        if (city != null) {
+            return garageService.findAll(city);
+        }
+        return garageService.findAll();
     }
 
     @GetMapping("/{id}")

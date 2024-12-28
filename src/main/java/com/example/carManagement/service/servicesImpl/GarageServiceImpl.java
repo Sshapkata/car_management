@@ -30,6 +30,13 @@ public class GarageServiceImpl implements GarageService {
     }
 
     @Override
+    public List<GarageDto> findAll() {
+        return garageRepository.findAll().stream()
+                .map(GarageEntityConvertorUtil::convertToDto)
+                .toList();
+    }
+
+    @Override
     public GarageDto findById(Long id) {
         GarageEntity garageEntity = garageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Garage with ID " + id + " not found"));
