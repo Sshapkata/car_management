@@ -5,6 +5,7 @@ import com.example.carManagement.api.dtos.GarageDto;
 import com.example.carManagement.api.services.CarService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +32,11 @@ public class CarController {
         return carService.findAll(carMake, garageId, fromYear, toYear);
     }
 
+    @GetMapping("/{id}")
+    public CarDto findById(@PathVariable Long id){
+        return carService.findById(id);
+    }
+
     @PostMapping
     public void createCar(@Valid @RequestBody CarDto dto){
         carService.create(dto);
@@ -41,4 +47,8 @@ public class CarController {
         carService.updateById(id, dto);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteGarage(@PathVariable Long id){
+        carService.deleteById(id);
+    }
 }

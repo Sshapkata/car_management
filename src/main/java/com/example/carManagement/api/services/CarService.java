@@ -8,7 +8,11 @@ public interface CarService {
 
     List<CarDto> findAll(String make, Long garageId, Integer fromYear, Integer toYear);
 
+    CarDto findById(Long id);
+
     void create(CarDto dto);
 
     void updateById(Long id, CarDto dto);
+
+    void deleteById(Long id);
 }

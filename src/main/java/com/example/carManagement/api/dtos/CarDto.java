@@ -18,7 +18,6 @@ public class CarDto {
     private Integer productionYear;
     @NotBlank(message = "License Plate cannot be blank")
     private String licensePlate;
-//    @NotEmpty(message = "Garages cannot be empty")
     private Set<GarageDto> garages = new HashSet<>();
     private Set<Long> garageIds = new HashSet<>();
 
