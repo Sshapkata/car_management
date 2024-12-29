@@ -1,7 +1,7 @@
 package com.example.carManagement.api.controllers;
 
-import com.example.carManagement.api.dtos.CarDto;
 import com.example.carManagement.api.dtos.MaintenanceDto;
+import com.example.carManagement.api.dtos.MaintenanceReportDto;
 import com.example.carManagement.api.services.MaintenanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,4 +51,10 @@ public class MaintenanceController {
     public void deleteGarage(@PathVariable Long id){
         maintenanceService.deleteById(id);
     }
+
+    @GetMapping("/monthlyRequestsReport")
+    public List<MaintenanceReportDto> getMaintenanceReport(@RequestParam Long garageId,@RequestParam String startMonth,@RequestParam String endMonth){
+        return maintenanceService.getReports(garageId, startMonth, endMonth);
+    }
+
 }

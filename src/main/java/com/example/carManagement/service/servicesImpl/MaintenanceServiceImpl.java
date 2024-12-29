@@ -1,11 +1,11 @@
 package com.example.carManagement.service.servicesImpl;
 
 import com.example.carManagement.api.dtos.MaintenanceDto;
+import com.example.carManagement.api.dtos.MaintenanceReportDto;
 import com.example.carManagement.api.services.MaintenanceService;
 import com.example.carManagement.service.entities.CarEntity;
 import com.example.carManagement.service.entities.GarageEntity;
 import com.example.carManagement.service.entities.MaintenanceEntity;
-import com.example.carManagement.service.exceptions.GarageCapacityExceededException;
 import com.example.carManagement.service.exceptions.ResourceNotFoundException;
 import com.example.carManagement.service.repositories.CarRepository;
 import com.example.carManagement.service.repositories.GarageRepository;
@@ -15,8 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MaintenanceServiceImpl implements MaintenanceService {
@@ -33,10 +37,6 @@ public class MaintenanceServiceImpl implements MaintenanceService {
         Optional<GarageEntity> optionalGarage = garageRepository.findById(dto.getGarageId());
         if (optionalGarage.isEmpty()) {
             throw new ResourceNotFoundException("Garage with ID " + dto.getGarageId() + " were not found");
-        }
-        List<MaintenanceDto> maintenanceDtosForGarageForDate = findAll(null, optionalGarage.get().getId(), dto.getScheduledDate(), dto.getScheduledDate());
-        if (maintenanceDtosForGarageForDate.size() >= optionalGarage.get().getCapacity()) {
-            throw new GarageCapacityExceededException("For garage " + dto.getGarageName() + " capacity for data " + dto.getScheduledDate() + " is exceeded");
         }
 
         Optional<CarEntity> optionalCar = carRepository.findById(dto.getCarId());
@@ -83,5 +83,38 @@ public class MaintenanceServiceImpl implements MaintenanceService {
             throw new ResourceNotFoundException("Maintenance with ID " + id + " not found");
         }
         maintenanceRepository.deleteById(id);
+    }
+
+    @Override
+    public List<MaintenanceReportDto> getReports(Long garageId, String startMonth, String endMonth) {
+        YearMonth startYearMonth = YearMonth.parse(startMonth);
+        YearMonth endYearMonth = YearMonth.parse(endMonth);
+
+        LocalDate startDate = startYearMonth.atDay(1);
+        LocalDate endDate = endYearMonth.atEndOfMonth();
+
+        Map<YearMonth, List<MaintenanceEntity>> groupedByDate = maintenanceRepository.findAllByGarageIdAndScheduledDateBetween(garageId, startDate, endDate)
+                .stream().collect(Collectors.groupingBy(entity -> YearMonth.from(entity.getScheduledDate())));
+
+        List<MaintenanceReportDto> maintenanceReportDtoList = new ArrayList<>();
+
+        YearMonth current = startYearMonth;
+        while (!current.isAfter(endYearMonth)) {
+            MaintenanceReportDto.YearMonthDto yearMonthDto = new MaintenanceReportDto.YearMonthDto();
+            yearMonthDto.setYear(current.getYear());
+            yearMonthDto.setMonth(current.getMonth());
+            yearMonthDto.setLeapYear(current.isLeapYear());
+            yearMonthDto.setMonthValue(current.getMonthValue());
+
+            MaintenanceReportDto maintenanceReportDto = new MaintenanceReportDto();
+
+            maintenanceReportDto.setYearMonth(yearMonthDto);
+            maintenanceReportDto.setRequests(groupedByDate.get(current) == null ? 0 : groupedByDate.get(current).size());
+            maintenanceReportDtoList.add(maintenanceReportDto);
+
+            current = current.plusMonths(1);
+        }
+
+        return maintenanceReportDtoList;
     }
 }

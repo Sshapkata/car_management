@@ -1,21 +1,31 @@
 package com.example.carManagement.service.servicesImpl;
 
 import com.example.carManagement.api.dtos.GarageDto;
+import com.example.carManagement.api.dtos.GarageReportDto;
 import com.example.carManagement.api.services.GarageService;
 import com.example.carManagement.service.entities.GarageEntity;
+import com.example.carManagement.service.entities.MaintenanceEntity;
 import com.example.carManagement.service.exceptions.ResourceNotFoundException;
 import com.example.carManagement.service.repositories.GarageRepository;
+import com.example.carManagement.service.repositories.MaintenanceRepository;
 import com.example.carManagement.service.util.DtoEntityConvertorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class GarageServiceImpl implements GarageService {
 
     @Autowired
     private GarageRepository garageRepository;
+
+    @Autowired
+    private MaintenanceRepository maintenanceRepository;
 
     @Override
     public List<GarageDto> findAll(String city) {
@@ -66,5 +76,20 @@ public class GarageServiceImpl implements GarageService {
             throw new ResourceNotFoundException("Garage with id " + id + " not found.");
         }
         garageRepository.deleteById(id);
+    }
+
+    @Override
+    public List<GarageReportDto> getReports(Long garageId, LocalDate startDate, LocalDate endDate) {
+        GarageDto garageDto = findById(garageId);
+        Map<LocalDate, List<MaintenanceEntity>> groupedByDate = maintenanceRepository.findAllByGarageIdAndScheduledDateBetween(garageId, startDate, endDate)
+                .stream()
+                .collect(Collectors.groupingBy(MaintenanceEntity::getScheduledDate));
+
+        ArrayList<GarageReportDto> garageReportDtos = new ArrayList<>();
+        groupedByDate.forEach((localDate, maintenanceEntities) -> {
+            garageReportDtos.add(new GarageReportDto(localDate, maintenanceEntities.size(), garageDto.getCapacity() - maintenanceEntities.size()));
+        });
+
+        return garageReportDtos;
     }
 }

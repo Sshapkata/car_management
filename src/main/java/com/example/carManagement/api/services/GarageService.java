@@ -1,7 +1,9 @@
 package com.example.carManagement.api.services;
 
 import com.example.carManagement.api.dtos.GarageDto;
+import com.example.carManagement.api.dtos.GarageReportDto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface GarageService {
@@ -17,5 +19,7 @@ public interface GarageService {
     void updateById(Long id, GarageDto dto);
 
     void deleteById(Long id);
+
+    List<GarageReportDto> getReports(Long garageId, LocalDate startDate, LocalDate endDate);
 
 }

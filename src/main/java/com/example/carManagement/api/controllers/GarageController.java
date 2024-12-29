@@ -1,6 +1,7 @@
 package com.example.carManagement.api.controllers;
 
 import com.example.carManagement.api.dtos.GarageDto;
+import com.example.carManagement.api.dtos.GarageReportDto;
 import com.example.carManagement.api.services.GarageService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -49,5 +51,10 @@ public class GarageController {
     @DeleteMapping("/{id}")
     public void deleteGarage(@PathVariable Long id){
         garageService.deleteById(id);
+    }
+
+    @GetMapping("/dailyAvailabilityReport")
+    public List<GarageReportDto> getGarageReport(@RequestParam Long garageId,@RequestParam LocalDate startDate,@RequestParam LocalDate endDate){
+        return garageService.getReports(garageId, startDate, endDate);
     }
 }
