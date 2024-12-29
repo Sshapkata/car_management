@@ -62,11 +62,7 @@ public class CarServiceImpl implements CarService {
         existingCarEntity.setLicensePlate(dto.getLicensePlate());
         Set<GarageEntity> garageEntities = dto.getGarageIds()
                 .stream()
-                .map(garageId -> {
-                    GarageEntity garageEntity = new GarageEntity();
-                    garageEntity.setId(garageId);
-                    return garageEntity;
-                })
+                .map(GarageEntity::new)
                 .collect(Collectors.toSet());
         existingCarEntity.setGarages(garageEntities);
         carRepository.save(existingCarEntity);

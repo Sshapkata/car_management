@@ -10,4 +10,10 @@ public interface MaintenanceService {
     void crete(MaintenanceDto dto);
 
     List<MaintenanceDto> findAll(Long carId, Long garageId, LocalDate startDate, LocalDate endDate);
+
+    MaintenanceDto findById(Long id);
+
+    void updateById(Long id, MaintenanceDto dto);
+
+    void deleteById(Long id);
 }
