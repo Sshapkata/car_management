@@ -34,6 +34,10 @@ public class CarEntity {
     public CarEntity() {
     }
 
+    public CarEntity(Long id) {
+        this.id = id;
+    }
+
     public CarEntity(String make, String model, Integer productionYear, String licensePlate, Set<GarageEntity> garages) {
         this.make = make;
         this.model = model;

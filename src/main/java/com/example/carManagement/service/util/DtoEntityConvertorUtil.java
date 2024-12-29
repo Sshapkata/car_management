@@ -2,8 +2,10 @@ package com.example.carManagement.service.util;
 
 import com.example.carManagement.api.dtos.CarDto;
 import com.example.carManagement.api.dtos.GarageDto;
+import com.example.carManagement.api.dtos.MaintenanceDto;
 import com.example.carManagement.service.entities.CarEntity;
 import com.example.carManagement.service.entities.GarageEntity;
+import com.example.carManagement.service.entities.MaintenanceEntity;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,11 +23,7 @@ public class DtoEntityConvertorUtil {
     public static CarEntity convertToEntity(CarDto dto){
         Set<GarageEntity> garageEntities = dto.getGarageIds()
                 .stream()
-                .map(id -> {
-                    GarageEntity garageEntity = new GarageEntity();
-                    garageEntity.setId(id);
-                    return garageEntity;
-                })
+                .map(GarageEntity::new)
                 .collect(Collectors.toSet());
         return new CarEntity(dto.getMake(), dto.getModel(), dto.getProductionYear(), dto.getLicensePlate(), garageEntities);
     }
@@ -36,5 +34,13 @@ public class DtoEntityConvertorUtil {
                 .map(DtoEntityConvertorUtil::convertToDto)
                 .collect(Collectors.toSet());
         return new CarDto(entity.getId(), entity.getMake(), entity.getModel(), entity.getProductionYear(), entity.getLicensePlate(), garageDtos);
+    }
+
+    public static MaintenanceEntity convertToEntity(MaintenanceDto dto){
+        return new MaintenanceEntity(new CarEntity(dto.getCarId()), new GarageEntity(dto.getGarageId()), dto.getScheduledDate(), dto.getServiceType());
+    }
+
+    public static MaintenanceDto convertToDto(MaintenanceEntity entity){
+        return new MaintenanceDto(entity.getId(), entity.getCarEntity().getId(), entity.getCarEntity().getMake(), entity.getServiceType(), entity.getScheduledDate(), entity.getGarageEntity().getId(), entity.getGarageEntity().getName());
     }
 }

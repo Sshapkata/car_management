@@ -27,6 +27,10 @@ public class GarageEntity {
     public GarageEntity() {
     }
 
+    public GarageEntity(Long id) {
+        this.id = id;
+    }
+
     public GarageEntity(String name, String location, String city, Integer capacity) {
         this.name = name;
         this.location = location;
